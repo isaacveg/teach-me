@@ -1,22 +1,50 @@
 # Intake Questions
 
-Ask in the user's teaching language. Extract answers already given. Ask only what's missing.
+Ask in the user's teaching language. Extract answers already given. Ask only what's missing. Do not make the user fill a long form.
 
 ## Standard Intake
 
-1. 你想学什么？一个知识点还是一门课程？
-2. 学到什么程度？入门了解 / 能使用 / 深入原理 / 考试面试 / 项目实践
-3. 现有基础？哪里最不熟？
-4. 时间预算？总时长、每次多长、有无截止
-5. 资料从哪来？模型知识 / 联网搜索 / 指定网址 / 本地文件
-6. 怎么学？详细还是简洁、要不要例子图示练习题、什么难度
+Start with a compact message like this, adapted to the user's language and context:
 
-## Fast Start (if user resists detailed intake)
+1. 你想学什么？这是一个知识点，还是一门课程/路线？
+2. 目标深度是什么？
+   - A. 入门理解
+   - B. 能实际使用
+   - C. 深入原理
+   - D. 考试/面试
+   - E. 项目实践
+   - F. 读论文/算法/源码
+3. 你现在有哪些相关基础？哪里最不熟？
+4. 你希望的学习步调是？
+   - A. 快速重点版：简单基础略过，抓主线
+   - B. 正常节奏：讲解、例子、检查题平衡
+   - C. 慢速打基础：更多例子和确认
+   - D. 先总览后深入：先看地图，再逐步细讲
+5. 资料从哪来？
+   - A. 只用 coach 已有知识
+   - B. 适当联网
+   - C. 指定网址/论文/课程
+   - D. 本地文件/笔记/代码仓库
 
-1. 学什么？
-2. 什么深度？
-3. 什么基础？
-4. 需要联网或本地资料吗？
+## Defaults
+
+Unless the user says otherwise:
+
+- Default to reasonably detailed teaching.
+- Use examples for abstract concepts.
+- Use adaptive exercises/check questions.
+- Use ASCII/Markdown visual aids when simple.
+- Ask before generating HTML visualization.
+- Do not ask for total learning time or per-session time unless the user mentions a deadline, exam, project milestone, or schedule constraint.
+
+## Fast Start
+
+If the user wants to start quickly, ask only:
+
+1. 学什么，目标是什么？
+2. 你已有基础是什么？
+3. 需要联网或本地资料吗？
+4. 学习步调：快速重点版 / 正常节奏 / 慢速打基础 / 先总览后深入？
 
 Mark assumed answers with `[assumed]` prefix in the plan.
 

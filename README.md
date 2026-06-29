@@ -1,6 +1,6 @@
 # teach-me
 
-Interactive learning coach skill for Pi/Agent. Guides a learner through intake, resource collection, study planning, concise teaching, exercises, progress tracking, and visualizations.
+Interactive learning coach skill for Pi/Agent. Guides a learner through intake, resource collection, study planning, structured teaching, exercises, progress tracking, and user-confirmed visualizations.
 
 ## Usage
 
