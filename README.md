@@ -18,9 +18,16 @@ Interactive learning coach skill for Pi/Agent. Guides a learner through intake, 
 
 Pi discovers any directory containing `SKILL.md`.
 
+As a Pi package, it can also be installed from git:
+
+```bash
+pi install git:github.com/isaacveg/teach-me
+```
+
 ## Repository
 
 ```text
+package.json                  # Pi package manifest
 SKILL.md                      # entrypoint, core rules, storage conventions
 references/workflow.md        # detailed 6-step workflow
 templates/

@@ -1,0 +1,35 @@
+{
+  "name": "teach-me",
+  "version": "0.1.0",
+  "description": "Interactive learning coach skill for Pi/Agent.",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/isaacveg/teach-me.git"
+  },
+  "bugs": {
+    "url": "https://github.com/isaacveg/teach-me/issues"
+  },
+  "homepage": "https://github.com/isaacveg/teach-me#readme",
+  "keywords": [
+    "pi-package",
+    "pi",
+    "pi-coding-agent",
+    "skill",
+    "learning",
+    "education",
+    "coach"
+  ],
+  "files": [
+    "SKILL.md",
+    "references/",
+    "templates/",
+    "README.md",
+    "LICENSE"
+  ],
+  "pi": {
+    "skills": [
+      "."
+    ]
+  }
+}
