@@ -1,142 +1,108 @@
 # Teach Me Workflow
 
-Follow this workflow in order unless the user is clearly resuming an existing session.
-
 ## 0. Determine Mode
 
-Classify the user's request as one of:
+| Mode | Trigger | Action |
+|------|---------|--------|
+| `new` | User wants to learn a new topic | Go to Step 1. Phase = `intake`. |
+| `resume` | "继续学习", "resume", etc. | Read state.json + plan.md. Jump to current phase, enter teaching loop. |
+| `progress` | "查看进度", "progress" | Read state.json + plan.md. Display progress. |
+| `summary` | "总结", "今天学了什么" | Read plan.md. Summarize. Append log entry to plan.md. |
+| `style-change` | "慢一点", "用英文", etc. | Read state.json. Update preferences. Confirm. |
+| `question` | One-off question in existing context | Read state.json for language/preferences. Answer in teaching style. |
 
-- `new`: the user wants to learn a new topic/course.
-- `resume`: the user wants to continue a previous session.
-- `progress`: the user wants to view or modify progress.
-- `summary`: the user wants a daily/session summary.
-- `style-change`: the user requests a teaching preference change.
-- `question`: the user asks a one-off question inside an existing learning context.
+`phase` in state.json tracks workflow position. For `new`, it advances: `intake` → `planning` → `learning` → `done`. Other modes re-enter at the current phase without changing it.
 
-For `resume`, `progress`, `summary`, and `style-change`, inspect the persisted session files before responding.
+## 1. Intake
 
-## 1. Intake / Diagnostic Questions
+Do not start teaching yet. Ask only missing high-value questions:
 
-Do not start teaching before collecting enough information.
+1. What to learn? (single point or full course?)
+2. Desired depth? (overview, usable, deep principle, exam, project)
+3. Existing foundation? Weak points?
+4. Time budget? (total, per session, deadline)
+5. Materials? (model knowledge only, web search, URLs, local files)
+6. Learning style? (concise/detailed, examples, visuals, exercises, difficulty)
 
-Ask for:
+If user resists, use fast-start (4 questions, see `templates/intake-questions.md`). Mark assumptions.
 
-1. Learning target: what does the user want to learn?
-2. Scope: single knowledge point or full course?
-3. Desired depth: overview, usable skill, deep principle, exam/interview, project practice, or custom.
-4. Existing foundation: what related knowledge does the user already have?
-5. Weak points: what is confusing or unknown?
-6. Time budget: total time, per-session time, deadline if any.
-7. Materials: model knowledge only, web search, provided URLs, local files/folders, code repo, notes.
-8. Exercise preference: none, light, normal, heavy.
-9. Difficulty preference: easy, medium, hard, adaptive.
-10. Teaching preferences: concise/detailed, examples, visualizations, analogy style, code-first, theory-first, etc.
-11. Language: infer from first invocation and confirm only if ambiguous.
-
-If the user already provided some answers, do not ask again. Ask only missing high-value questions.
+After intake, create the session directory and write initial `state.json` with `phase: intake`, inferred `language`, and `updated`. If user chose model-knowledge-only, skip to Step 3.
 
 ## 2. Resource Collection
 
-If the user requests web resources or internet-based learning:
+If user wants web resources:
+- Multiple distinct search queries.
+- Prefer official docs, reputable tutorials.
+- Summarize direction and relevance.
+- Save findings to plan.md resources section.
 
-- Use multiple distinct search queries, not just one keyword.
-- Prefer official docs, reputable tutorials, source material, and high-signal references.
-- Summarize the direction and relevance of each resource, not every detail.
+If user provides local files/URLs:
+- Inspect selectively. Don't read huge directories blindly.
+- Summarize contribution.
 
-If the user provides local files or folders:
+If web search is unavailable, fall back to model knowledge and tell the user.
 
-- Use file listing/search tools to inspect the structure.
-- Read relevant files selectively.
-- Avoid reading a huge directory blindly.
-- Summarize what each local source contributes.
-
-If the user provides URLs:
-
-- Fetch/read the pages if tools are available.
-- Preserve URLs in `resources.md`.
-
-After collection, produce exactly one concise scope-confirmation sentence in the user's teaching language. It must include:
-
-- the directions/sources collected so far;
-- the main learning points you expect to cover;
-- a question asking whether this is enough or whether to add more directions.
-
-Example:
-
-> 我会结合官方文档、你提供的本地笔记和几篇入门资料，围绕 Promise 的状态模型、链式调用、错误传播、async/await 关系和工程实践来设计学习路径；这些方向是否足够，还是还要补充其他重点？
-
-If the user adds new directions, repeat only the necessary resource collection and scope confirmation.
+After collection, produce one scope-confirmation sentence covering sources and learning points. Ask if scope is sufficient.
 
 ## 3. Study Plan
 
-Create a detailed but not overwhelming study plan with chapters and subtopics.
+Create study plan in `plan.md` using `templates/plan-template.md`.
 
-Rules:
+- Chapters and subtopics with clear learning objectives.
+- Mark user-known items `[x]` with note.
+- Only one item `[-]` at a time.
+- Include resources section with all collected materials.
+- Set `state.json.phase` to `planning`.
 
-- Use `[ ]`, `[-]`, `[x]` markers.
-- Mark user-known prerequisites as `[x]` with a note such as “已掌握 / already known”.
-- Mark only one current item as `[-]` unless there is a good reason.
-- Leave future items as `[ ]`.
-- Each subtopic should have a clear learning objective.
-- Add notes where useful: mastery, doubt, half-finished point, prerequisite, exercise result, or review suggestion.
+Show the plan. Ask user to: (1) modify, (2) start now, or (3) save for later.
 
-Keep both:
+If (2): set `phase: learning`, mark first item `[-]`, set `current` in state.json, enter teaching loop.
+If (3): save and tell user how to resume.
 
-- `plan.md`: human-readable plan.
-- `state.json.progress`: machine-readable progress.
+## 4. Interactive Teaching
 
-## 4. Plan Approval
+For the current item (`state.json.current`):
 
-After showing the plan, ask the user to choose:
+1. Read state.json and plan.md to confirm current position.
+2. Teach one small concept (the current item).
+3. Include a concrete example for abstract ideas.
+4. Use ASCII/Markdown visuals first; generate HTML only when complexity warrants it. Save to `materials/`.
+5. Leave room for thinking. Ask: clarify, more examples, exercise, or continue?
+6. Before moving to next item, offer a check question (unless `exerciseFrequency: none`).
+   - `easy`: recall/definition
+   - `medium`: apply or compare
+   - `hard`: analyze, debug, design
+7. Judge the answer and explain.
+8. If correct: mark item `[x]` in plan.md, mark next item `[-]`, update `state.json.current`.
+9. If incorrect: keep `[-]`, add a note, re-explain or give an easier exercise.
 
-1. Modify the plan.
-2. Agree and start learning now.
-3. The plan is fine, but start later.
+After each status change, update plan.md. Update state.json when `current` changes, preferences change, important doubts/wrong answers appear, or the session may be interrupted. Refresh `updated` and `resume` on those meaningful changes.
 
-If the user chooses 1, ask for or apply modifications, update files, and show the three options again.
+If user asks a tangential question (question mode within an active session): answer it in teaching style. If related to a plan item, note it. Don't change progress unless user asks.
 
-If the user chooses 2, begin the interactive learning loop.
+## 5. Teaching Style Changes
 
-If the user chooses 3, save all files and tell the user the plan is ready and can be resumed later.
+Update `state.json.preferences` immediately, confirm the change, follow it from the next turn.
 
-## 5. Interactive Teaching Loop
+| User says | Field update |
+|-----------|-------------|
+| "讲慢一点" | `pace: slow` |
+| "多举例" | `explanationLength: long` (with examples) |
+| "不要做题" | `exerciseFrequency: none` |
+| "题难一点" | `exerciseDifficulty: hard` |
+| "多用图" | `visualization: frequent` |
+| "用英文讲" | `language: en` |
 
-For the current knowledge item:
+## 6. End of Session
 
-1. Read `state.json` and `plan.md` to know what is current.
-2. Teach one small concept only.
-3. Keep the explanation concise unless the user's preferences say otherwise.
-4. For abstract ideas, include a concrete example.
-5. If a visual helps, use ASCII/Markdown first; generate HTML only when worthwhile or requested.
-6. Explain with cause → process → result, or shallow → deep structure.
-7. Leave room for thinking. Ask whether the user wants clarification, more examples, an exercise, or to continue.
-8. When the user wants to move to the next item, offer a suitable question/checkpoint first unless exercises are disabled.
-9. If the user answers, judge correctness and explain why.
-10. If the user passes or confirms understanding, update the item to `[x]` and move the next item to `[-]`.
-11. If the user is uncertain or wrong, keep the item as `[-]`, add a note, and provide a targeted explanation or easier exercise.
+When user finishes or a natural block ends:
 
-## 6. Teaching Style Changes
+1. Update plan.md: append a dated log entry at the bottom covering what was learned, exercises, doubts, next step.
+2. Update state.json: set `resume` to a one-sentence summary (current item, open questions, next step), refresh `updated`, and set `phase` to `paused` (or `done` if completed).
+3. Tell user how to resume: `/skill:teach-me 继续学习 <topic>`
 
-When the user asks for any teaching-style change, update the state immediately before continuing.
+## Graceful Degradation
 
-Examples:
-
-- “讲慢一点” → `pace: slow`
-- “每次少讲点” → `explanationLength: short`
-- “多举例” → `exampleStyle: concrete` or add note
-- “不要做题” → `exerciseFrequency: none`
-- “题难一点” → `exerciseDifficulty: hard`
-- “多用图” → `visualization: frequent`
-- “以后用英文讲” → `language: en`
-
-After updating, briefly confirm the change in the current teaching language and follow it strictly.
-
-## 7. End-of-Session Summary
-
-When the user asks to finish, summarize today, stop for now, or when a natural study block ends:
-
-1. Update `plan.md`.
-2. Update `state.json`, especially `resumeSummary`, `current`, `updatedAt`, and teaching preferences if changed.
-3. Append a dated entry to `logs.md`.
-4. Include what was learned, user requests, mastery, mistakes, unresolved doubts, and next step.
-5. Tell the user how to resume.
+- **No web search**: Fall back to model knowledge. Note in plan.md resources.
+- **No file write**: Warn user. Operate from memory. Remind at end that progress will be lost.
+- **No HTML generation**: Use ASCII diagrams and Markdown tables only.

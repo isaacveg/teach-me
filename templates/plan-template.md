@@ -1,57 +1,48 @@
 # Plan Template
 
-Use this structure in `plan.md`. Translate headings and notes to the session teaching language.
+Use this structure in `plan.md`. Translate all user-facing text to the session teaching language. The template below uses Chinese as an example — adapt to the actual teaching language.
 
 ```md
-# 学习计划：<title>
+# <title>
 
-更新时间：<date/time>
-教学语言：<language>
-当前阶段：<phase>
+> 目标：<one sentence — what the learner wants to achieve>
+> 语言：<language> | 进度：<completed>/<total> | 更新：<date>
 
-## 学习目标
+## 资料
 
-<one or two concise sentences>
+- <type>: <title> — <URL or path> — <brief note on what it covers>
+- 模型知识 — <topics covered from model knowledge>
 
-## 资料来源概览
+## <Chapter 1>
 
-- <source direction 1>
-- <source direction 2>
+- [x] <item-id> <title> — <note: why completed / already known>
+- [-] <item-id> <title> — <note: current progress, doubts>
+- [ ] <item-id> <title>
+  目标：<what the learner should be able to do>
 
-## 进度标记
+## <Chapter 2>
 
-- `[ ]` 未开始
-- `[-]` 进行中
-- `[x]` 已完成 / 已掌握
-
-## 1. <Chapter Title>
-
-- [x] 1.1 <Known or completed item>  
-  目标：<learning objective>  
-  备注：<why completed / mastery / foundation>
-
-- [-] 1.2 <Current item>  
-  目标：<learning objective>  
-  备注：<current progress, doubts, half-finished status>
-
-- [ ] 1.3 <Future item>  
-  目标：<learning objective>  
-  备注：<optional>
-
-## 2. <Chapter Title>
-
-- [ ] 2.1 <Future item>  
+- [ ] <item-id> <title>
   目标：<learning objective>
 
-## 下次继续
+---
 
-<short resume instruction based on current item>
+## 学习记录
+
+### <date>
+
+- 学习了：<items covered>
+- 掌握情况：<per-item assessment>
+- 练习：<what was asked, how user answered, result>
+- 疑问：<unresolved questions>
+- 下次：<next item to teach>
 ```
 
 ## Rules
 
-- Use clear chapters and subtopics.
-- Only one item should usually be `[-]`.
-- User-known prerequisites may be `[x]` with a note.
-- Keep notes useful but short.
-- Keep this file consistent with `state.json.progress`.
+- Only one `[-]` item at a time.
+- Each item note should be one line: mastery, doubt, exercise result, skip reason, etc.
+- The "资料" section lists all collected resources inline — no separate resources file.
+- The "学习记录" section is appended after each session — no separate logs file.
+- Generated visuals go in `materials/` and are referenced from item notes or the 资料 section.
+- After any progress change, update plan.md. This IS the record.

@@ -1,8 +1,6 @@
 # teach-me
 
-`teach-me` is a Pi/Agent skill for interactive learning. It guides a learner through intake, resource collection, study planning, concise teaching, exercises, progress tracking, visualizations, and learning logs.
-
-During learning, the agent may call itself `coach`, but the skill name is always `teach-me`.
+Interactive learning coach skill for Pi/Agent. Guides a learner through intake, resource collection, study planning, concise teaching, exercises, progress tracking, and visualizations.
 
 ## Usage
 
@@ -12,38 +10,33 @@ During learning, the agent may call itself `coach`, but the skill name is always
 /skill:teach-me 查看学习进度
 ```
 
-## Installation for Pi
-
-Clone or copy this repository into a Pi skill discovery location, for example:
+## Installation
 
 ```text
 ~/.pi/agent/skills/teach-me/
 ```
 
-Pi discovers a skill directory that contains `SKILL.md`. For local development/testing from this repository, start Pi with this skill path explicitly if needed:
+Pi discovers any directory containing `SKILL.md`.
 
-```bash
-pi --skill .
-```
-
-## Repository Structure
+## Repository
 
 ```text
-SKILL.md                         # skill entrypoint and core rules
-references/workflow.md           # detailed workflow
-references/storage.md            # minimal persistence rules
-schemas/state.schema.json        # state file schema
-templates/intake-questions.md    # intake question template
-templates/plan-template.md       # plan template
-templates/log-template.md        # learning log template
+SKILL.md                      # entrypoint, core rules, storage conventions
+references/workflow.md        # detailed 6-step workflow
+templates/
+├── intake-questions.md       # diagnostic questions
+└── plan-template.md          # lesson plan structure (includes resources + log)
 ```
 
 ## Runtime Data
 
-This repository is the skill source code. User learning sessions should be stored in the consuming project, not in this repository:
+Three top-level entries per learning session, stored in the user's project:
 
 ```text
 .pi/learning-sessions/<topic-slug>/
+├── state.json    # minimal teaching state for quick resume
+├── plan.md       # lesson plan, progress, resources, and learning log
+└── materials/    # generated visuals and collected files
 ```
 
-Runtime files include `state.json`, `plan.md`, `resources.md`, `logs.md`, and optional `visuals/*.html`.
+No separate resources file, no separate logs file, no index registry. `plan.md` is the single main human-readable artifact; `state.json` exists only for quick resume, and `materials/` stores supporting files.
