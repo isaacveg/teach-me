@@ -5,14 +5,43 @@
 | Mode | Trigger | Action |
 |------|---------|--------|
 | `new` | User wants to learn a new topic | Go to Step 1. Phase = `intake`. |
-| `resume` | "继续学习", "resume", etc. | Read `state.json` + `plan.md`. Jump to current phase, enter teaching loop. |
-| `progress` | "查看进度", "progress" | Read `state.json` + `plan.md`. Display progress. |
-| `summary` | "总结", "今天学了什么" | Read `plan.md`. Summarize. Append log entry to `plan.md`. |
-| `style-change` | "慢一点", "用英文", etc. | Read `state.json`. Update preferences. Confirm. |
-| `question` | One-off question in existing context | Read `state.json` for language/preferences. Answer in teaching style. |
+| `resume` | "继续学习", "resume", etc. | Locate a session from the current folder first, then read `state.json` + `plan.md`. Jump to current phase and enter teaching loop. |
+| `progress` | "查看进度", "progress" | Locate a session, read `state.json` + `plan.md`, display progress. |
+| `summary` | "总结", "今天学了什么" | Locate a session, read `plan.md`, summarize, append log entry to `plan.md`. |
+| `style-change` | "慢一点", "用英文", etc. | Locate the active session if any, read `state.json`, update preferences, confirm. |
+| `question` | One-off question in existing context | Read `state.json` if a session is active; answer in teaching style. |
 | `dry-run` | User says they are testing/simulating/walking through the skill | Ask whether to write real files or run without persistence. If dry-run, do not create normal session files. |
 
 `phase` in `state.json` tracks workflow position. For `new`, it advances: `intake` → `planning` → `learning` → `done`. Other modes re-enter at the current phase without changing it.
+
+## Session Location Rules
+
+Before creating a new real session, ask:
+
+> 可以把学习状态保存在当前文件夹下吗？默认会使用 `./.teach-me/sessions/<slug>/`。你也可以指定其他目录。
+
+If the user agrees, use:
+
+```text
+<current-working-folder>/.teach-me/sessions/<slug>/
+```
+
+If the user specifies another storage base, use:
+
+```text
+<user-specified-folder>/<slug>/
+```
+
+If the user specifies an existing session directory containing `state.json` and `plan.md`, use that directory directly.
+
+For resume/progress/summary, locate sessions in this order:
+
+1. If current folder contains `state.json` and `plan.md`, use current folder as the session directory.
+2. Else look for session directories under `./.teach-me/sessions/`.
+3. If none are found, ask the user to either open the folder containing the learning session or provide the session/storage directory path.
+4. If multiple sessions are found, list them with title/updated/resume if available and ask which one to use.
+
+Do not create a new session while handling a resume request unless the user explicitly asks to start over.
 
 ## Planning Wizard Display
 
@@ -48,6 +77,7 @@ Collect:
    - `慢速打基础` — more examples and checks.
    - `先总览后深入` — roadmap first, then details.
 5. Material source: model knowledge only, web search when useful, provided URLs, local files/folders, code repo, notes.
+6. Storage location: ask whether current folder is okay for saving session files, or whether the user wants to specify another folder.
 
 Do **not** ask for total learning time or per-session time by default. Ask about schedule only if the user mentions a deadline, exam, project milestone, or time constraint.
 
@@ -61,7 +91,7 @@ Default assumptions unless the user says otherwise:
 
 If user resists, use fast-start questions from `templates/intake-questions.md`. Mark assumptions in `plan.md` with `[assumed]`.
 
-After intake, create the session directory and write initial `state.json` with `phase: intake`, inferred `language`, `updated`, and initial `preferences`. If user chose model-knowledge-only, skip to Step 3.
+After intake and storage consent, create the session directory and write initial `state.json` with `phase: intake`, inferred `language`, `updated`, and initial `preferences`. If user chose model-knowledge-only, skip to Step 3.
 
 ## 2. Resource Collection and Scope Confirmation
 
@@ -171,7 +201,7 @@ When user finishes or a natural block ends:
 
 1. Update `plan.md`: append a dated log entry at the bottom covering what was learned, exercises, doubts, next step.
 2. Update `state.json`: set `resume` to a one-sentence summary (current item, open questions, next step), refresh `updated`, and set `phase` to `paused` (or `done` if completed).
-3. Tell user how to resume: `/skill:teach-me 继续学习 <topic>`.
+3. Tell user how to resume in natural language, for example: `继续学习 <topic>`.
 
 ## Graceful Degradation
 

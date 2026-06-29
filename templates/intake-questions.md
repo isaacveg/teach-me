@@ -25,6 +25,10 @@ Start with a compact message like this, adapted to the user's language and conte
    - B. 适当联网
    - C. 指定网址/论文/课程
    - D. 本地文件/笔记/代码仓库
+6. 学习状态保存在哪里？
+   - A. 当前文件夹下：`./.teach-me/sessions/`
+   - B. 我指定一个目录
+   - C. 暂时不保存 / dry-run
 
 ## Defaults
 
@@ -45,6 +49,7 @@ If the user wants to start quickly, ask only:
 2. 你已有基础是什么？
 3. 需要联网或本地资料吗？
 4. 学习步调：快速重点版 / 正常节奏 / 慢速打基础 / 先总览后深入？
+5. 可以把学习状态保存在当前文件夹下的 `./.teach-me/sessions/` 吗？
 
 Mark assumed answers with `[assumed]` prefix in the plan.
 

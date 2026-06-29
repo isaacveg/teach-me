@@ -7,6 +7,7 @@ Use this structure in `plan.md`. Translate all user-facing text to the session t
 
 > 目标：<one sentence — what the learner wants to achieve>
 > 语言：<language> | 步调：<pace> | 进度：<completed>/<total> | 更新：<date>
+> 保存目录：<session-directory>
 
 ## 资料
 

@@ -4,7 +4,7 @@
 .vscode/
 
 # Runtime learning sessions generated when testing the skill in this repo
-.pi/learning-sessions/
+.teach-me/sessions/
 
 # Logs and temporary files
 *.log
